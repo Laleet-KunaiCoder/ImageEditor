@@ -8,7 +8,7 @@ export default function Home() {
   const [selectedTool, setSelectedTool] = useState("brush");
   const [brushWidth, setBrushWidth] = useState(5);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [isImageSelected,setIsImageSelected]=useState(false);
+  const [isImageSelected, setIsImageSelected] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [snapshot, setSnapshot] = useState<ImageData | null>(null);
@@ -167,7 +167,7 @@ export default function Home() {
                       const file = target.files[0];
                       setSelectedImage(URL.createObjectURL(file));
                       setSelectedFile(file);
-                      setIsImageSelected(true)
+                      setIsImageSelected(true);
                     }
                   }}
                 />
@@ -335,7 +335,8 @@ export default function Home() {
               Save As Image
             </button>
             <span className="p-1 m-1 text-red-500">
-              Note:black and white colour make it grayscale and if  select any other colour than that it will make the backround image colourful
+              Note:black and white colour make it grayscale and if select any
+              other colour than that it will make the backround image colourful
             </span>
           </div>
         </section>
