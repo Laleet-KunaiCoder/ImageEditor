@@ -8,12 +8,14 @@ export default function Home() {
   const [selectedTool, setSelectedTool] = useState("brush");
   const [brushWidth, setBrushWidth] = useState(5);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [isImageSelected,setIsImageSelected]=useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [snapshot, setSnapshot] = useState<ImageData | null>(null);
   const [prevMouseX, setPrevMouseX] = useState(0);
   const [prevMouseY, setPrevMouseY] = useState(0);
-  let ix: number, iy: number;
+  const [filters, setFilters] = useState("grayscale(1)");
+
   const handleUpload = async () => {
     setUploading(true);
     try {
@@ -93,18 +95,34 @@ export default function Home() {
     if (!ctx || !canvas) return;
     console.log(`${canvas.width} and ${canvas.height}`);
     if (selectedImage && selectedFile) {
-      const image = new Image();
+      const img = new Image();
 
-      image.onload = () => {
+      img.onload = () => {
+        var canvas = ctx.canvas;
+        var hRatio = canvas.width / img.width;
+        var vRatio = canvas.height / img.height;
+        var ratio = Math.min(hRatio, vRatio);
+        var centerShift_x = (canvas.width - img.width * ratio) / 2;
+        var centerShift_y = (canvas.height - img.height * ratio) / 2;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        ctx.filter = filters;
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          img.width,
+          img.height,
+          centerShift_x,
+          centerShift_y,
+          img.width * ratio,
+          img.height * ratio
+        );
       };
-      image.src = URL.createObjectURL(selectedFile);
-      ctx.filter = "grayscale(1)";
+      img.src = URL.createObjectURL(selectedFile);
     } else {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-  }, [selectedImage, selectedFile]);
+  }, [selectedImage, selectedFile, filters]);
 
   return (
     <div className="flex bg-black flex-col gap-y-20">
@@ -149,6 +167,7 @@ export default function Home() {
                       const file = target.files[0];
                       setSelectedImage(URL.createObjectURL(file));
                       setSelectedFile(file);
+                      setIsImageSelected(true)
                     }
                   }}
                 />
@@ -158,12 +177,12 @@ export default function Home() {
           <div className="flex p-2 space-x-4 justify-center">
             <button
               onClick={handleUpload}
-              disabled={uploading}
+              disabled={!isImageSelected}
               className={`${
                 uploading
                   ? "opacity-50 cursor-not-allowed"
                   : "opacity-100 cursor-pointer"
-              } bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
+              } bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded  disabled:bg-red-400 disabled:text-gray-100 `}
             >
               {uploading ? "Uploading.." : "Upload"}
             </button>
@@ -240,26 +259,38 @@ export default function Home() {
             />
           </div>
           <div className="row colors mb-5">
-            <label className="mb-3 text-gray-900 font-medium  text-lg">
-              Colors:
+            <label className="mb-3 flex flex-row gap-2  text-gray-900 font-medium  text-lg">
+              <span className="align-center">Color:</span>
             </label>
             <ul className=" flex justify-around items-center	content-center">
               <li
                 className={`ring-2 ring-gray-400 bg-white border rounded h-5 w-5 my-1 
                  `}
-                onClick={() => setSelectedColor("#ffffff")}
+                onClick={() => {
+                  setSelectedColor("#ffffff");
+                  setFilters("grayscale(1)");
+                }}
               ></li>
               <li
                 className={`ring-2 ring-gray-400  bg-black rounded h-5 w-5 my-1`}
-                onClick={() => setSelectedColor("#000000")}
+                onClick={() => {
+                  setSelectedColor("#000000");
+                  setFilters("grayscale(1)");
+                }}
               ></li>
               <li
                 className={`ring-2 ring-gray-400 bg-red-500 rounded h-5 w-5 my-1 `}
-                onClick={() => setSelectedColor("#ff0000")}
+                onClick={() => {
+                  setSelectedColor("#ff0000");
+                  setFilters("none");
+                }}
               ></li>
               <li
                 className={`ring-2 ring-gray-400 bg-green-500 rounded h-5 w-5 my-1`}
-                onClick={() => setSelectedColor("#00ff00")}
+                onClick={() => {
+                  setSelectedColor("#00ff00");
+                  setFilters("none");
+                }}
               ></li>
               <li>
                 <input
@@ -267,7 +298,10 @@ export default function Home() {
                   type="color"
                   id="color-picker "
                   value={selectedColor || "#4A98F7"}
-                  onChange={(e) => setSelectedColor(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedColor(e.target.value);
+                    setFilters("none");
+                  }}
                 />
               </li>
             </ul>
@@ -300,6 +334,9 @@ export default function Home() {
             >
               Save As Image
             </button>
+            <span className="p-1 m-1 text-red-500">
+              Note:black and white colour make it grayscale and if  select any other colour than that it will make the backround image colourful
+            </span>
           </div>
         </section>
         <section className="w-3/4 p-x-10">
