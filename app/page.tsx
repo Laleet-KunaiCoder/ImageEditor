@@ -171,7 +171,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex mb-20 flex-row flex-wrap-reverse bg-white rounded container p-10 mx-auto">
+      <div className="flex mb-20 min-h-700 flex-row flex-wrap-reverse bg-white rounded container p-10 mx-auto">
         <section className=" w-1/4 ">
           <div className="row flex flex-col gap-3 mb-8">
             <label className=" text-gray-900 font-medium  text-lg">
@@ -179,10 +179,10 @@ export default function Home() {
             </label>
             <ul className="flex flex-col gap-1.5">
               <li
-                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center  ${
                   selectedTool === "rectangle"
                     ? "bg-blue-800 text-blue-100"
-                    : "bg-blue-200"
+                    : "bg-blue-200 text-gray-700 "
                 }`}
                 id="circle"
                 onClick={() => {
@@ -194,10 +194,10 @@ export default function Home() {
                 <span className="">Rectangle</span>
               </li>
               <li
-                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center  ${
                   selectedTool === "circle"
                     ? "bg-blue-800 text-blue-100"
-                    : "bg-blue-200"
+                    : "bg-blue-200 text-gray-700 "
                 }`}
                 id="circle"
                 onClick={() => {
@@ -209,10 +209,10 @@ export default function Home() {
                 <span className=" ">Circle</span>
               </li>
               <li
-                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center  ${
                   selectedTool === "triangle"
                     ? "bg-blue-800 text-blue-100"
-                    : "bg-blue-200"
+                    : "bg-blue-200 text-gray-700 "
                 }`}
                 id="triangle"
                 onClick={() => {
@@ -306,7 +306,8 @@ export default function Home() {
           {selectedImage && (
             <canvas
               className="bg-white m-auto"
-              height={500}
+              height={600}
+              width={700}
               ref={canvasRef}
               onMouseDown={startDraw}
               onMouseMove={drawing}
