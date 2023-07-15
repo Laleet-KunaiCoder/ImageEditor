@@ -13,7 +13,7 @@ export default function Home() {
   const [snapshot, setSnapshot] = useState<ImageData | null>(null);
   const [prevMouseX, setPrevMouseX] = useState(0);
   const [prevMouseY, setPrevMouseY] = useState(0);
-
+  let ix: number, iy: number;
   const handleUpload = async () => {
     setUploading(true);
     try {
@@ -91,24 +91,23 @@ export default function Home() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!ctx || !canvas) return;
-
+    console.log(`${canvas.width} and ${canvas.height}`);
     if (selectedImage && selectedFile) {
       const image = new Image();
 
       image.onload = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-       
       };
       image.src = URL.createObjectURL(selectedFile);
-      ctx.filter = 'grayscale(1)';
+      ctx.filter = "grayscale(1)";
     } else {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   }, [selectedImage, selectedFile]);
 
   return (
-    <div>
+    <div className="flex bg-black flex-col gap-y-20">
       <div className="flex justify-center mt-8">
         <div className="rounded-lg shadow-xl bg-gray-50 lg:w-1/2">
           <div className="m-4">
@@ -172,91 +171,94 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex flex-row bg-white rounded container mx-auto">
-        <section className=" w-1/4  p-5">
-          <div className="row mb-5">
-            <label className=" mb-3 text-gray-800 text-lg">Shapes:</label>
-            <ul className="options">
+      <div className="flex mb-20 flex-row flex-wrap-reverse bg-white rounded container p-10 mx-auto">
+        <section className=" w-1/4 ">
+          <div className="row flex flex-col gap-3 mb-8">
+            <label className=" text-gray-900 font-medium  text-lg">
+              Shapes:
+            </label>
+            <ul className="flex flex-col gap-1.5">
               <li
-                className={`option tool flex items-center mb-1 ${
-                  selectedTool === "rectangle" ? "active" : ""
-                }`}
-                id="rectangle"
-                onClick={() => setSelectedTool("rectangle")}
-              >
-
-                <span className="text-gray-700">Rectangle</span>
-              </li>
-              <li
-                className={`option tool flex items-center mb-1 ${
-                  selectedTool === "circle" ? "active" : ""
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                  selectedTool === "rectangle"
+                    ? "bg-blue-800 text-blue-100"
+                    : "bg-blue-200"
                 }`}
                 id="circle"
-                onClick={() => setSelectedTool("circle")}
+                onClick={() => {
+                  selectedTool === "rectangle"
+                    ? setSelectedTool("brush")
+                    : setSelectedTool("rectangle");
+                }}
               >
-                <span className="text-gray-700">Circle</span>
+                <span className="">Rectangle</span>
               </li>
               <li
-                className={`option tool flex items-center ${
-                  selectedTool === "triangle" ? "active" : ""
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                  selectedTool === "circle"
+                    ? "bg-blue-800 text-blue-100"
+                    : "bg-blue-200"
+                }`}
+                id="circle"
+                onClick={() => {
+                  selectedTool === "circle"
+                    ? setSelectedTool("brush")
+                    : setSelectedTool("circle");
+                }}
+              >
+                <span className=" ">Circle</span>
+              </li>
+              <li
+                className={`p-1 inline rounded mr-20 pointer-events-auto text-center text-gray-700  ${
+                  selectedTool === "triangle"
+                    ? "bg-blue-800 text-blue-100"
+                    : "bg-blue-200"
                 }`}
                 id="triangle"
-                onClick={() => setSelectedTool("triangle")}
+                onClick={() => {
+                  selectedTool === "triangle"
+                    ? setSelectedTool("brush")
+                    : setSelectedTool("triangle");
+                }}
               >
-                <span className="text-gray-700">Triangle</span>
+                <span className="">Triangle</span>
               </li>
             </ul>
           </div>
-          <div className="row mb-5">
-            <label className="mb-3 text-lg  text-gray-800">Options:</label>
-            <ul className="options">
-              <li
-                className={` active tool flex items-center mb-2 ${
-                  selectedTool === "brush" ? "active" : ""
-                }`}
-                id="brush"
-                onClick={() => setSelectedTool("brush")}
-              >
-                <span className="text-gray-700">Brush</span>
-              </li>
-              <li className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                <input
-                className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer dark:bg-blue-500"
-                  type="range"
-                  id="size-slider"
-                  min="1"
-                  max="30"
-                  value={brushWidth}
-                  onChange={(e) => setBrushWidth(Number(e.target.value))}
-                />
-              </li>
-            </ul>
+          <div className="row flex flex-col gap-3 mb-5">
+            <label className="block text-lg font-medium text-gray-900 ">
+              Brush size:
+            </label>
+
+            <input
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-blue-700 "
+              type="range"
+              min="1"
+              max="30"
+              value={brushWidth}
+              onChange={(e) => setBrushWidth(Number(e.target.value))}
+            />
           </div>
-          <div className="row colors">
-            <label className="title mb-3 text-gray-800">Colors</label>
-            <ul className="options flex justify-between">
+          <div className="row colors mb-5">
+            <label className="mb-3 text-gray-900 font-medium  text-lg">
+              Colors:
+            </label>
+            <ul className=" flex justify-around items-center	content-center">
               <li
-                className={`option bg-white border border-gray-300 rounded h-5 w-5 my-1 ${
-                  selectedColor === "#ffffff" ? "selected" : ""
-                }`}
+                className={`ring-2 ring-gray-400 bg-white border rounded h-5 w-5 my-1 
+                 `}
                 onClick={() => setSelectedColor("#ffffff")}
               ></li>
               <li
-                className={`option selected bg-black rounded h-5 w-5 my-1 ${
-                  selectedColor === "#000000" ? "selected" : ""
-                }`}
+                className={`ring-2 ring-gray-400  bg-black rounded h-5 w-5 my-1`}
                 onClick={() => setSelectedColor("#000000")}
               ></li>
               <li
-                className={`option bg-red-500 rounded h-5 w-5 my-1 ${
-                  selectedColor === "#ff0000" ? "selected" : ""
-                }`}
+                className={`ring-2 ring-gray-400 bg-red-500 rounded h-5 w-5 my-1 `}
                 onClick={() => setSelectedColor("#ff0000")}
               ></li>
               <li
-                className={`option bg-green-500 rounded h-5 w-5 my-1 ${
-                  selectedColor === "#00ff00" ? "selected" : ""
-                }`}
+                className={`ring-2 ring-gray-400 bg-green-500 rounded h-5 w-5 my-1`}
                 onClick={() => setSelectedColor("#00ff00")}
               ></li>
               <li>
@@ -270,7 +272,7 @@ export default function Home() {
               </li>
             </ul>
           </div>
-          <div className="flex flex-col 	">
+          <div className="flex flex-col ">
             <button
               className="m-1 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
               onClick={() => {
@@ -300,11 +302,10 @@ export default function Home() {
             </button>
           </div>
         </section>
-        <section className="w-3/4">
+        <section className="w-3/4 p-x-10">
           {selectedImage && (
             <canvas
               className="bg-white m-auto"
-              width={400}
               height={500}
               ref={canvasRef}
               onMouseDown={startDraw}
